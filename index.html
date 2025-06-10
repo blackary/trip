@@ -14,6 +14,14 @@
       rel="stylesheet"
       href="https://unpkg.com/simpledotcss/simple.min.css"
     />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+    <script src="states.js"></script>
     <style>
       #map {
         height: 600px;
@@ -54,13 +62,6 @@
       <ul id="all-states"></ul>
     </div>
 
-    <script
-      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-      crossorigin=""
-    ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
-    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script>
       // Initialize the map
       const map = L.map("map").setView([39.8283, -98.5795], 4);
@@ -72,7 +73,6 @@
       }).addTo(map);
 
       let tripPoints = [];
-      let visitedStates = new Set();
 
       // Define a custom camper van emoji icon
       const camperVanIcon = L.divIcon({
@@ -99,102 +99,46 @@
             },
           }).addTo(map);
 
-          // Load US states boundaries
-          fetch(
-            "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json"
-          )
-            .then((response) => response.json())
-            .then((statesData) => {
-              const statesLayer = L.geoJSON(statesData, {
-                style: {
-                  color: "#666",
-                  weight: 1,
-                  fillOpacity: 0.1,
-                },
-                onEachFeature: function (feature, layer) {
-                  try {
-                    if (!feature.geometry || !feature.geometry.coordinates) {
-                      console.warn(
-                        "Invalid geometry for state:",
-                        feature.properties.name
-                      );
-                      return;
-                    }
-                    let polygons = [];
-                    if (feature.geometry.type === "Polygon") {
-                      // Single polygon
-                      polygons = [feature.geometry.coordinates];
-                    } else if (feature.geometry.type === "MultiPolygon") {
-                      // Multiple polygons
-                      polygons = feature.geometry.coordinates;
-                    } else {
-                      console.warn(
-                        "Unsupported geometry type for state:",
-                        feature.properties.name
-                      );
-                      return;
-                    }
-                    let isVisited = false;
-                    for (const polyCoords of polygons) {
-                      // Each polyCoords is an array of linear rings; the first is the outer ring
-                      if (!polyCoords[0] || polyCoords[0].length < 4) {
-                        continue;
-                      }
-                      // Ensure the polygon is closed
-                      const ring = polyCoords[0];
-                      if (
-                        ring[0][0] !== ring[ring.length - 1][0] ||
-                        ring[0][1] !== ring[ring.length - 1][1]
-                      ) {
-                        ring.push(ring[0]);
-                      }
-                      const statePolygon = turf.polygon([ring]);
-                      isVisited = tripPoints.some((point) => {
-                        try {
-                          const pointFeature = turf.point(
-                            point.geometry.coordinates
-                          );
-                          return turf.booleanPointInPolygon(
-                            pointFeature,
-                            statePolygon
-                          );
-                        } catch (e) {
-                          return false;
-                        }
-                      });
-                      if (isVisited) break;
-                    }
-                    if (isVisited) {
-                      visitedStates.add(feature.properties.name);
-                      layer.setStyle({
-                        fillColor: "#90EE90",
+          // Use getVisitedStates to determine visited states
+          getVisitedStates(tripPoints).then((visitedStates) => {
+            fetch("us-states.json")
+              .then((response) => response.json())
+              .then((statesData) => {
+                const statesLayer = L.geoJSON(statesData, {
+                  style: function (feature) {
+                    if (visitedStates.has(feature.properties.name)) {
+                      return {
+                        color: "#666",
+                        weight: 1,
                         fillOpacity: 0.3,
-                      });
+                        fillColor: "#90EE90",
+                      };
+                    } else {
+                      return {
+                        color: "#666",
+                        weight: 1,
+                        fillOpacity: 0.1,
+                      };
                     }
-                  } catch (e) {
-                    console.warn(
-                      "Error processing state:",
-                      feature.properties.name,
-                      e
-                    );
+                  },
+                }).addTo(map);
+
+                // Create simplified state list
+                const allStatesList = document.getElementById("all-states");
+                allStatesList.innerHTML = "";
+                statesData.features.forEach((state) => {
+                  const stateItem = document.createElement("li");
+                  stateItem.textContent = state.properties.name;
+                  if (visitedStates.has(state.properties.name)) {
+                    stateItem.textContent += " ✅";
                   }
-                },
-              }).addTo(map);
+                  allStatesList.appendChild(stateItem);
+                });
 
-              // Create simplified state list
-              const allStatesList = document.getElementById("all-states");
-              statesData.features.forEach((state) => {
-                const stateItem = document.createElement("li");
-                stateItem.textContent = state.properties.name;
-                if (visitedStates.has(state.properties.name)) {
-                  stateItem.textContent += " ✅";
-                }
-                allStatesList.appendChild(stateItem);
+                // Fit the map to show all points
+                map.fitBounds(tripLayer.getBounds());
               });
-
-              // Fit the map to show all points
-              map.fitBounds(tripLayer.getBounds());
-            });
+          });
         })
         .catch((error) => console.error("Error loading trip data:", error));
     </script>
