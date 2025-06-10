@@ -38,6 +38,12 @@
         margin: 5px 0;
         font-size: 1.1em;
       }
+      .camper-van-icon {
+        font-size: 2rem;
+        line-height: 1;
+        text-align: center;
+        text-shadow: 0 1px 2px #fff, 0 0px 2px #fff;
+      }
     </style>
   </head>
   <body>
@@ -68,6 +74,15 @@
       let tripPoints = [];
       let visitedStates = new Set();
 
+      // Define a custom camper van emoji icon
+      const camperVanIcon = L.divIcon({
+        className: "camper-van-icon",
+        html: "🚐",
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+
       // Fetch and load the trip data
       fetch("trip.yml")
         .then((response) => response.text())
@@ -78,7 +93,9 @@
           // Add the GeoJSON layer
           const tripLayer = L.geoJSON(tripData, {
             pointToLayer: function (feature, latlng) {
-              return L.marker(latlng).bindPopup(feature.properties.name);
+              return L.marker(latlng, { icon: camperVanIcon }).bindPopup(
+                feature.properties.name
+              );
             },
           }).addTo(map);
 
