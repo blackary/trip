@@ -1,0 +1,83 @@
+---
+type: FeatureCollection
+features:
+- type: Feature
+  properties:
+    name: West Lafayette, Indiana, United States
+  geometry:
+    type: Point
+    coordinates:
+    - -86.950236
+    - 40.44845
+- type: Feature
+  properties:
+    name: Happy Hens Farm
+  geometry:
+    type: Point
+    coordinates:
+    - -86.126433
+    - 42.681438
+- type: Feature
+  properties:
+    name: Mackinaw Mill Creek Campground
+  geometry:
+    type: Point
+    coordinates:
+    - -84.685631
+    - 45.750717
+- type: Feature
+  properties:
+    name: Big Bay State Park
+  geometry:
+    type: Point
+    coordinates:
+    - -90.6739109
+    - 46.7951436
+- type: Feature
+  properties:
+    name: Rocky Top Acres
+  geometry:
+    type: Point
+    coordinates:
+    - -92.397067
+    - 43.804426
+- type: Feature
+  properties:
+    name: Maquoketa Caves State Park
+  geometry:
+    type: Point
+    coordinates:
+    - -90.7709763
+    - 42.1198409
+- type: Feature
+  properties:
+    name: Walmart Supercenter
+  geometry:
+    type: Point
+    coordinates:
+    - -90.66444
+    - 42.0484
+- type: Feature
+  properties:
+    name: Cracker Barrel Old Country Store
+  geometry:
+    type: Point
+    coordinates:
+    - -88.83673
+    - 41.38086
+- type: Feature
+  properties:
+    name: Wheaton, Illinois, United States
+  geometry:
+    type: Point
+    coordinates:
+    - -88.1083
+    - 41.8561
+- type: Feature
+  properties:
+    name: West Lafayette, Indiana, United States
+  geometry:
+    type: Point
+    coordinates:
+    - -86.9125
+    - 40.4419444
