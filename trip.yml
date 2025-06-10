@@ -35,6 +35,14 @@ features:
     - 46.7951436
 - type: Feature
   properties:
+    name: Bayfield, Wisconsin, United States
+  geometry:
+    type: Point
+    coordinates:
+    - -90.82843975047251
+    - 46.81364993554658
+- type: Feature
+  properties:
     name: Rocky Top Acres
   geometry:
     type: Point

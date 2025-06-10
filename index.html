@@ -19,11 +19,34 @@
         height: 600px;
         width: 100%;
       }
+      #state-list {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #f8f8f8;
+        max-width: 600px;
+      }
+      #state-list h2 {
+        margin-top: 0;
+        margin-bottom: 10px;
+      }
+      #state-list ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      #state-list li {
+        margin: 5px 0;
+        font-size: 1.1em;
+      }
     </style>
   </head>
   <body>
     <h1>Our Trip 2025-2026</h1>
     <div id="map"></div>
+    <div id="state-list">
+      <h2>States</h2>
+      <ul id="all-states"></ul>
+    </div>
 
     <script
       src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -31,6 +54,7 @@
       crossorigin=""
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
     <script>
       // Initialize the map
       const map = L.map("map").setView([39.8283, -98.5795], 4);
@@ -41,11 +65,15 @@
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
+      let tripPoints = [];
+      let visitedStates = new Set();
+
       // Fetch and load the trip data
       fetch("trip.yml")
         .then((response) => response.text())
         .then((yamlText) => {
           const tripData = jsyaml.load(yamlText);
+          tripPoints = tripData.features;
 
           // Add the GeoJSON layer
           const tripLayer = L.geoJSON(tripData, {
@@ -54,8 +82,102 @@
             },
           }).addTo(map);
 
-          // Fit the map to show all points
-          map.fitBounds(tripLayer.getBounds());
+          // Load US states boundaries
+          fetch(
+            "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json"
+          )
+            .then((response) => response.json())
+            .then((statesData) => {
+              const statesLayer = L.geoJSON(statesData, {
+                style: {
+                  color: "#666",
+                  weight: 1,
+                  fillOpacity: 0.1,
+                },
+                onEachFeature: function (feature, layer) {
+                  try {
+                    if (!feature.geometry || !feature.geometry.coordinates) {
+                      console.warn(
+                        "Invalid geometry for state:",
+                        feature.properties.name
+                      );
+                      return;
+                    }
+                    let polygons = [];
+                    if (feature.geometry.type === "Polygon") {
+                      // Single polygon
+                      polygons = [feature.geometry.coordinates];
+                    } else if (feature.geometry.type === "MultiPolygon") {
+                      // Multiple polygons
+                      polygons = feature.geometry.coordinates;
+                    } else {
+                      console.warn(
+                        "Unsupported geometry type for state:",
+                        feature.properties.name
+                      );
+                      return;
+                    }
+                    let isVisited = false;
+                    for (const polyCoords of polygons) {
+                      // Each polyCoords is an array of linear rings; the first is the outer ring
+                      if (!polyCoords[0] || polyCoords[0].length < 4) {
+                        continue;
+                      }
+                      // Ensure the polygon is closed
+                      const ring = polyCoords[0];
+                      if (
+                        ring[0][0] !== ring[ring.length - 1][0] ||
+                        ring[0][1] !== ring[ring.length - 1][1]
+                      ) {
+                        ring.push(ring[0]);
+                      }
+                      const statePolygon = turf.polygon([ring]);
+                      isVisited = tripPoints.some((point) => {
+                        try {
+                          const pointFeature = turf.point(
+                            point.geometry.coordinates
+                          );
+                          return turf.booleanPointInPolygon(
+                            pointFeature,
+                            statePolygon
+                          );
+                        } catch (e) {
+                          return false;
+                        }
+                      });
+                      if (isVisited) break;
+                    }
+                    if (isVisited) {
+                      visitedStates.add(feature.properties.name);
+                      layer.setStyle({
+                        fillColor: "#90EE90",
+                        fillOpacity: 0.3,
+                      });
+                    }
+                  } catch (e) {
+                    console.warn(
+                      "Error processing state:",
+                      feature.properties.name,
+                      e
+                    );
+                  }
+                },
+              }).addTo(map);
+
+              // Create simplified state list
+              const allStatesList = document.getElementById("all-states");
+              statesData.features.forEach((state) => {
+                const stateItem = document.createElement("li");
+                stateItem.textContent = state.properties.name;
+                if (visitedStates.has(state.properties.name)) {
+                  stateItem.textContent += " ✅";
+                }
+                allStatesList.appendChild(stateItem);
+              });
+
+              // Fit the map to show all points
+              map.fitBounds(tripLayer.getBounds());
+            });
         })
         .catch((error) => console.error("Error loading trip data:", error));
     </script>
