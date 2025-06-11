@@ -104,6 +104,12 @@
             fetch("us-states.json")
               .then((response) => response.json())
               .then((statesData) => {
+                const visitedStatesLayer = L.geoJSON(
+                  statesData.features.filter((state) =>
+                    visitedStates.has(state.properties.name)
+                  )
+                );
+
                 const statesLayer = L.geoJSON(statesData, {
                   style: function (feature) {
                     if (visitedStates.has(feature.properties.name)) {
@@ -136,7 +142,7 @@
                 });
 
                 // Fit the map to show all points
-                map.fitBounds(tripLayer.getBounds());
+                map.fitBounds(visitedStatesLayer.getBounds());
               });
           });
         })
