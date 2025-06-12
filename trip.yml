@@ -107,3 +107,363 @@ features:
     coordinates:
     - -86.9125
     - 40.4419444
+- type: Feature
+  properties:
+    name: West Lafayette, Indiana, United States
+    loop: 2
+    future: false
+    geometry:
+      type: Point
+      coordinates:
+        - -86.950236
+        - 40.44845
+- type: Feature
+  properties:
+    name: The Grazing Ground Dayton
+    loop: 2
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -84.215106
+      - 39.83833
+- type: Feature
+  properties:
+    name: River Expeditions Cabins & Camping
+    loop: 2
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -81.119682
+      - 38.009785
+- type: Feature
+  properties:
+    name: Cades Cove Campground
+    loop: 2
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -83.7713099
+      - 35.6038916
+- type: Feature
+  properties:
+    name: Nashville KOA Resort
+    loop: 2
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -86.707634
+      - 36.233875
+- type: Feature
+  properties:
+    name: Mammoth Cave Horse Camp
+    loop: 2
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -86.1912391
+      - 37.2468839
+- type: Feature
+  properties:
+    name: Cracker Barrel
+    loop: 2
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -84.539362
+      - 38.22066
+- type: Feature
+  properties:
+    name: Ark Encounter
+    loop: 2
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -84.5809303
+      - 38.6279108
+- type: Feature
+  properties:
+    name: West Lafayette, Indiana, United States
+    loop: 2
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -86.9125
+      - 40.4419444
+- type: Feature
+  properties:
+    name: West Lafayette, Indiana, United States
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -86.950236
+      - 40.44845
+- type: Feature
+  properties:
+    name: Towpath Service Plaza
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -81.67624
+      - 41.2922
+- type: Feature
+  properties:
+    name: Cuyahoga Valley National Park
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -81.571167
+      - 41.260939
+- type: Feature
+  properties:
+    name: HTR Niagara
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -78.991598
+      - 43.0249504
+- type: Feature
+  properties:
+    name: Lisbon, New York, United States
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -75.3211111
+      - 44.7272222
+- type: Feature
+  properties:
+    name: Sheep Shop
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -72.41488
+      - 44.41602
+- type: Feature
+  properties:
+    name: Goodrich's Maple Farm
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -72.2580457
+      - 44.3792232
+- type: Feature
+  properties:
+    name: The Mount Washington Cog Railway
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -71.4411111
+      - 44.2580556
+- type: Feature
+  properties:
+    name: Schoodic Woods Campground
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -68.0665938
+      - 44.380063
+- type: Feature
+  properties:
+    name: Seawall Campground
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -68.305992
+      - 44.242233
+- type: Feature
+  properties:
+    name: Harold Parker State Forest
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -71.07673
+      - 42.616753
+- type: Feature
+  properties:
+    name: Plimoth Plantation
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -70.625332
+      - 41.938166
+- type: Feature
+  properties:
+    name: Harvest Hosts Stay
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -71.2913889
+      - 41.5455556
+- type: Feature
+  properties:
+    name: Marble House
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -71.3059046
+      - 41.4621542
+- type: Feature
+  properties:
+    name: Cabela's
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -72.6233
+      - 41.7553
+- type: Feature
+  properties:
+    name: Mark Twain House & Museum
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -72.70138
+      - 41.76714
+- type: Feature
+  properties:
+    name: Stowe Center for Literary Activism
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -72.7001745
+      - 41.7664072
+- type: Feature
+  properties:
+    name: Sam's Club
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -72.731303
+      - 41.652665
+- type: Feature
+  properties:
+    name: Rye's Playland
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -73.675197
+      - 40.965154
+- type: Feature
+  properties:
+    name: Liberty Harbor RV Park
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -74.0439
+      - 40.712051
+- type: Feature
+  properties:
+    name: Princeton, New Jersey, United States
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -74.6569444
+      - 40.3522222
+- type: Feature
+  properties:
+    name: The Farmers Market
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -75.2126697
+      - 39.8095247
+- type: Feature
+  properties:
+    name: Harvest Hosts Stay
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -75.4291667
+      - 38.9125
+- type: Feature
+  properties:
+    name: Washington, D.C., United States
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -77.0366667
+      - 38.895
+- type: Feature
+  properties:
+    name: Lake Fairfax Park Campground
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -77.31794
+      - 38.96317
+- type: Feature
+  properties:
+    name: Gettysburg, Pennsylvania, United States
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -77.2322
+      - 39.8283
+- type: Feature
+  properties:
+    name: West Lafayette, Indiana, United States
+    loop: 3
+    future: true
+  geometry:
+    type: Point
+    coordinates:
+      - -86.9125
+      - 40.4419444
