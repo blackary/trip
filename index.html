@@ -27,6 +27,30 @@
         height: 600px;
         width: 100%;
       }
+      #controls {
+        margin: 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      #controls label {
+        font-size: 1.1em;
+        margin-right: 8px;
+        white-space: nowrap;
+      }
+      #loop-selector {
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: 1.5px solid #1976d2;
+        font-size: 1.2em;
+        min-width: 120px;
+        background: #fff;
+        transition: border 0.2s;
+      }
+      #loop-selector:focus {
+        outline: none;
+        border: 2px solid #1976d2;
+      }
       #state-list {
         margin-top: 20px;
         padding: 15px;
@@ -56,6 +80,10 @@
   </head>
   <body>
     <h1>Our Trip 2025-2026</h1>
+    <div id="controls">
+      <label for="loop-selector">Loop:</label>
+      <select id="loop-selector"></select>
+    </div>
     <div id="map"></div>
     <div id="state-list">
       <h2>States</h2>
@@ -73,6 +101,10 @@
       }).addTo(map);
 
       let tripPoints = [];
+      let tripLayer;
+      let statesLayer;
+      let visitedStatesLayer;
+      let allLoops = [];
 
       // Define a custom camper van emoji icon
       const camperVanIcon = L.divIcon({
@@ -83,68 +115,127 @@
         popupAnchor: [0, -32],
       });
 
+      function updateLoopSelector(loops) {
+        const selector = document.getElementById("loop-selector");
+        selector.innerHTML = "";
+        const allOption = document.createElement("option");
+        allOption.value = "all";
+        allOption.textContent = "All Loops";
+        selector.appendChild(allOption);
+
+        // Only add options for unique, defined loops
+        loops
+          .filter(
+            (loop, idx, arr) =>
+              loop !== undefined && loop !== null && arr.indexOf(loop) === idx
+          )
+          .sort((a, b) => a - b)
+          .forEach((loop) => {
+            const opt = document.createElement("option");
+            opt.value = loop;
+            opt.textContent = `Loop ${loop}`;
+            selector.appendChild(opt);
+          });
+      }
+
+      function updateMap(selectedLoop) {
+        // Clear existing layers
+        if (tripLayer) map.removeLayer(tripLayer);
+        if (statesLayer) map.removeLayer(statesLayer);
+        if (visitedStatesLayer) map.removeLayer(visitedStatesLayer);
+
+        // Filter points based on selected loop
+        const filteredPoints =
+          selectedLoop === "all"
+            ? tripPoints
+            : tripPoints.filter(
+                (point) => point.properties.loop === parseInt(selectedLoop)
+              );
+
+        // Add the GeoJSON layer with filtered points
+        tripLayer = L.geoJSON(filteredPoints, {
+          pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, { icon: camperVanIcon }).bindPopup(
+              feature.properties.name
+            );
+          },
+        }).addTo(map);
+
+        // Use getVisitedStates to determine visited states
+        getVisitedStates(filteredPoints).then((visitedStates) => {
+          fetch("us-states.json")
+            .then((response) => response.json())
+            .then((statesData) => {
+              visitedStatesLayer = L.geoJSON(
+                statesData.features.filter((state) =>
+                  visitedStates.has(state.properties.name)
+                )
+              );
+
+              statesLayer = L.geoJSON(statesData, {
+                style: function (feature) {
+                  if (visitedStates.has(feature.properties.name)) {
+                    return {
+                      color: "#666",
+                      weight: 1,
+                      fillOpacity: 0.3,
+                      fillColor: "#90EE90",
+                    };
+                  } else {
+                    return {
+                      color: "#666",
+                      weight: 1,
+                      fillOpacity: 0.1,
+                    };
+                  }
+                },
+              }).addTo(map);
+
+              // Create simplified state list
+              const allStatesList = document.getElementById("all-states");
+              allStatesList.innerHTML = "";
+              statesData.features.forEach((state) => {
+                const stateItem = document.createElement("li");
+                stateItem.textContent = state.properties.name;
+                if (visitedStates.has(state.properties.name)) {
+                  stateItem.textContent += " ✅";
+                }
+                allStatesList.appendChild(stateItem);
+              });
+
+              // Fit the map to show all points
+              if (filteredPoints.length > 0) {
+                map.fitBounds(visitedStatesLayer.getBounds());
+              }
+            });
+        });
+      }
+
+      // Add event listener for loop selector
+      document
+        .getElementById("loop-selector")
+        .addEventListener("change", (e) => {
+          updateMap(e.target.value);
+        });
+
       // Fetch and load the trip data
-      fetch("trip.yml")
+      fetch("trip.yml?v=" + Date.now())
         .then((response) => response.text())
         .then((yamlText) => {
           const tripData = jsyaml.load(yamlText);
           tripPoints = tripData.features;
-
-          // Add the GeoJSON layer
-          const tripLayer = L.geoJSON(tripData, {
-            pointToLayer: function (feature, latlng) {
-              return L.marker(latlng, { icon: camperVanIcon }).bindPopup(
-                feature.properties.name
-              );
-            },
-          }).addTo(map);
-
-          // Use getVisitedStates to determine visited states
-          getVisitedStates(tripPoints).then((visitedStates) => {
-            fetch("us-states.json")
-              .then((response) => response.json())
-              .then((statesData) => {
-                const visitedStatesLayer = L.geoJSON(
-                  statesData.features.filter((state) =>
-                    visitedStates.has(state.properties.name)
-                  )
-                );
-
-                const statesLayer = L.geoJSON(statesData, {
-                  style: function (feature) {
-                    if (visitedStates.has(feature.properties.name)) {
-                      return {
-                        color: "#666",
-                        weight: 1,
-                        fillOpacity: 0.3,
-                        fillColor: "#90EE90",
-                      };
-                    } else {
-                      return {
-                        color: "#666",
-                        weight: 1,
-                        fillOpacity: 0.1,
-                      };
-                    }
-                  },
-                }).addTo(map);
-
-                // Create simplified state list
-                const allStatesList = document.getElementById("all-states");
-                allStatesList.innerHTML = "";
-                statesData.features.forEach((state) => {
-                  const stateItem = document.createElement("li");
-                  stateItem.textContent = state.properties.name;
-                  if (visitedStates.has(state.properties.name)) {
-                    stateItem.textContent += " ✅";
-                  }
-                  allStatesList.appendChild(stateItem);
-                });
-
-                // Fit the map to show all points
-                map.fitBounds(visitedStatesLayer.getBounds());
-              });
-          });
+          // Get all unique loops
+          allLoops = tripPoints
+            .map((p) => p.properties.loop)
+            .filter((l) => l !== undefined && l !== null);
+          console.log("Unique loops:", allLoops);
+          updateLoopSelector(allLoops);
+          // Initialize map with all points
+          updateMap("all");
+          console.log("tripData:", tripData);
+          console.log("tripPoints:", tripPoints);
+          console.log("First feature:", tripPoints[0]);
+          console.log("First feature properties:", tripPoints[0].properties);
         })
         .catch((error) => console.error("Error loading trip data:", error));
     </script>
