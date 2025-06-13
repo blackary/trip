@@ -21,11 +21,98 @@
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
-    <script src="states.js"></script>
+    <script>
+      var script = document.createElement("script");
+      script.src = "states.js?v=" + Date.now();
+      document.head.appendChild(script);
+    </script>
     <style>
       #map {
         height: 600px;
         width: 100%;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px #0001;
+        margin-bottom: 1.5rem;
+        position: relative;
+      }
+      .loop-selector {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin: 1.5rem 0 1rem 0;
+      }
+      .loop-btn {
+        border: none;
+        background: #e6eaf0;
+        color: #222;
+        border-radius: 999px;
+        padding: 0.5em 1.2em;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.2s;
+      }
+      .loop-btn.active,
+      .loop-btn:hover {
+        background: #bcdffb;
+      }
+      .legend {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px #0001;
+        padding: 0.5em 1em;
+        font-size: 0.95em;
+        display: flex;
+        gap: 1em;
+        align-items: center;
+        z-index: 1000;
+      }
+      .legend-dot {
+        width: 1em;
+        height: 1em;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.4em;
+      }
+      .legend-dot.visited {
+        background: #4caf50;
+      }
+      .legend-dot.planned {
+        background: #2196f3;
+      }
+      .states-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px #0001;
+        padding: 1rem;
+        margin: 2rem auto 1.5rem auto;
+        max-width: 700px;
+      }
+      .states-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5em;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .state-chip {
+        background: #e6eaf0;
+        border-radius: 999px;
+        padding: 0.3em 1em;
+        font-size: 1em;
+        margin-bottom: 0.3em;
+      }
+      .state-chip.visited {
+        background: #b7f7c2;
+        font-weight: bold;
+      }
+      .state-chip.planned {
+        background: #bcdffb;
+        color: #222;
+        font-weight: bold;
       }
       #controls {
         margin: 20px 0;
@@ -83,14 +170,15 @@
   </head>
   <body>
     <h1>Our Trip 2025-2026</h1>
-    <div id="controls">
-      <label for="loop-selector">Loop:</label>
-      <select id="loop-selector"></select>
+    <div id="loop-controls" class="loop-selector"></div>
+    <div id="map" style="position: relative"></div>
+    <div id="map-legend" class="legend">
+      <span><span class="legend-dot visited"></span>Visited</span>
+      <span><span class="legend-dot planned"></span>Planned</span>
     </div>
-    <div id="map"></div>
-    <div id="state-list">
+    <div id="state-list" class="states-card">
       <h2>States</h2>
-      <ul id="all-states"></ul>
+      <ul id="all-states" class="states-list"></ul>
     </div>
 
     <script>
@@ -127,14 +215,14 @@
       });
 
       function updateLoopSelector(loops) {
-        const selector = document.getElementById("loop-selector");
-        selector.innerHTML = "";
-        const allOption = document.createElement("option");
-        allOption.value = "all";
-        allOption.textContent = "All Loops";
-        selector.appendChild(allOption);
+        const container = document.getElementById("loop-controls");
+        container.innerHTML = "";
+        const allBtn = document.createElement("button");
+        allBtn.className = "loop-btn active";
+        allBtn.textContent = "All";
+        allBtn.dataset.value = "all";
+        container.appendChild(allBtn);
 
-        // Only add options for unique, defined loops
         loops
           .filter(
             (loop, idx, arr) =>
@@ -142,11 +230,39 @@
           )
           .sort((a, b) => a - b)
           .forEach((loop) => {
-            const opt = document.createElement("option");
-            opt.value = loop;
-            opt.textContent = `Loop ${loop}`;
-            selector.appendChild(opt);
+            const btn = document.createElement("button");
+            btn.className = "loop-btn";
+            btn.textContent = `Loop ${loop}`;
+            btn.dataset.value = loop;
+            container.appendChild(btn);
           });
+
+        // Add event listeners
+        container.querySelectorAll(".loop-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            container
+              .querySelectorAll(".loop-btn")
+              .forEach((b) => b.classList.remove("active"));
+            this.classList.add("active");
+            updateMap(this.dataset.value);
+          });
+        });
+      }
+
+      function updateStatesList(statesData, visitedStates, plannedStates) {
+        const allStatesList = document.getElementById("all-states");
+        allStatesList.innerHTML = "";
+        statesData.features.forEach((state) => {
+          const li = document.createElement("li");
+          li.className = "state-chip";
+          li.textContent = state.properties.name;
+          if (visitedStates.has(state.properties.name)) {
+            li.classList.add("visited");
+          } else if (plannedStates.has(state.properties.name)) {
+            li.classList.add("planned");
+          }
+          allStatesList.appendChild(li);
+        });
       }
 
       function updateMap(selectedLoop) {
@@ -184,7 +300,10 @@
           (point) => point.properties.future !== true
         );
 
-        getVisitedStates(nonFuturePoints).then((visitedStates) => {
+        Promise.all([
+          getVisitedStates(nonFuturePoints),
+          getPlannedStates(filteredPoints),
+        ]).then(([visitedStates, plannedStates]) => {
           fetch("us-states.json")
             .then((response) => response.json())
             .then((statesData) => {
@@ -203,6 +322,13 @@
                       fillOpacity: 0.3,
                       fillColor: "#90EE90",
                     };
+                  } else if (plannedStates.has(feature.properties.name)) {
+                    return {
+                      color: "#666",
+                      weight: 1,
+                      fillOpacity: 0.3,
+                      fillColor: "#bcdffb",
+                    };
                   } else {
                     return {
                       color: "#666",
@@ -213,17 +339,8 @@
                 },
               }).addTo(map);
 
-              // Create simplified state list
-              const allStatesList = document.getElementById("all-states");
-              allStatesList.innerHTML = "";
-              statesData.features.forEach((state) => {
-                const stateItem = document.createElement("li");
-                stateItem.textContent = state.properties.name;
-                if (visitedStates.has(state.properties.name)) {
-                  stateItem.textContent += " ✅";
-                }
-                allStatesList.appendChild(stateItem);
-              });
+              // Use chips for states, passing both visited and planned
+              updateStatesList(statesData, visitedStates, plannedStates);
 
               // Fit the map to show all points
               if (nonFuturePoints.length > 0) {
@@ -232,13 +349,6 @@
             });
         });
       }
-
-      // Add event listener for loop selector
-      document
-        .getElementById("loop-selector")
-        .addEventListener("change", (e) => {
-          updateMap(e.target.value);
-        });
 
       // Fetch and load the trip data
       fetch("trip.yml?v=" + Date.now())
