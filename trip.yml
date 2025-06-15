@@ -121,7 +121,7 @@ features:
   properties:
     name: The Grazing Ground Dayton
     loop: 2
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -131,7 +131,7 @@ features:
   properties:
     name: River Expeditions Cabins & Camping
     loop: 2
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
