@@ -141,7 +141,7 @@ features:
   properties:
     name: Cades Cove Campground
     loop: 2
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -151,7 +151,7 @@ features:
   properties:
     name: Nashville KOA Resort
     loop: 2
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -161,7 +161,7 @@ features:
   properties:
     name: Mammoth Cave Horse Camp
     loop: 2
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
