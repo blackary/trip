@@ -27,161 +27,360 @@
       document.head.appendChild(script);
     </script>
     <style>
+      :root {
+        --bg-card: light-dark(#fff, #2a2a2a);
+        --bg-surface: light-dark(#f8f9fa, #1a1a1a);
+        --bg-button: light-dark(#fff4e6, #3a3a3a);
+        --bg-button-active: light-dark(#ff8c42, #ff8c42);
+        --bg-visited: light-dark(#e8f5e8, #2d4a2d);
+        --bg-planned: light-dark(#e3f2fd, #1a3a5c);
+        --bg-neutral: light-dark(#f0f0f0, #404040);
+        --text-primary: light-dark(#2c3e50, #e0e0e0);
+        --text-button: light-dark(#8b4513, #e0e0e0);
+        --text-button-active: light-dark(#fff, #fff);
+        --shadow: light-dark(rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+        --border: light-dark(rgba(0,0,0,0.1), rgba(255,255,255,0.1));
+        --visited-color: #4caf50;
+        --planned-color: #42a5f5;
+      }
+
+      /* Reset Simple.css constraints */
+      * {
+        max-width: none !important;
+      }
+
+      html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      body {
+        max-width: none !important;
+      }
+
+      /* Our container */
+      .app-container {
+        margin: 0 auto !important;
+        padding: 1rem !important;
+        max-width: 1600px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Restore some specific elements that need max-width */
+      dialog {
+        max-width: 40rem !important;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      @media (min-width: 768px) {
+        .content-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+          align-items: start;
+        }
+        .app-container {
+          padding: 2rem;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .content-grid {
+          grid-template-columns: 1.2fr 0.8fr;
+          gap: 3rem;
+        }
+        .app-container {
+          padding: 2rem 3rem;
+        }
+      }
+
       #map {
-        height: 600px;
+        height: 500px;
         width: 100%;
         border-radius: 12px;
-        box-shadow: 0 2px 8px #0001;
-        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px var(--shadow);
         position: relative;
       }
+
+      @media (min-width: 768px) {
+        #map {
+          height: 600px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        #map {
+          height: 700px;
+        }
+      }
+
       .loop-selector {
         display: flex;
         gap: 0.5rem;
         justify-content: center;
-        margin: 1.5rem 0 1rem 0;
+        margin: 1.5rem 0;
+        flex-wrap: wrap;
       }
+
       .loop-btn {
         border: none;
-        background: #e6eaf0;
-        color: #222;
-        border-radius: 999px;
-        padding: 0.5em 1.2em;
+        background: var(--bg-button);
+        color: var(--text-button);
+        border-radius: 25px;
+        padding: 0.75rem 1.5rem;
         cursor: pointer;
         font-size: 1rem;
-        transition: background 0.2s;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 4px var(--shadow);
       }
+
       .loop-btn.active,
       .loop-btn:hover {
-        background: #bcdffb;
+        background: var(--bg-button-active);
+        color: var(--text-button-active);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px var(--shadow);
       }
+
       .legend {
         position: absolute;
         bottom: 1rem;
         right: 1rem;
-        background: #fff;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         border-radius: 8px;
-        box-shadow: 0 1px 4px #0001;
-        padding: 0.5em 1em;
-        font-size: 0.95em;
+        box-shadow: 0 2px 8px var(--shadow);
+        padding: 0.75rem;
+        font-size: 0.9rem;
         display: flex;
-        gap: 1em;
+        gap: 1rem;
         align-items: center;
         z-index: 1000;
+        backdrop-filter: blur(10px);
       }
+
       .legend-dot {
-        width: 1em;
-        height: 1em;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
         display: inline-block;
-        margin-right: 0.4em;
+        margin-right: 0.5rem;
       }
+
       .legend-dot.visited {
-        background: #4caf50;
+        background: var(--visited-color);
       }
+
       .legend-dot.planned {
-        background: #2196f3;
+        background: var(--planned-color);
       }
-      .states-card {
-        background: #fff;
+
+      .states-panel {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         border-radius: 12px;
-        box-shadow: 0 2px 8px #0001;
-        padding: 1rem;
-        margin: 2rem auto 1.5rem auto;
-        max-width: 700px;
+        box-shadow: 0 4px 12px var(--shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
+
+      @media (min-width: 768px) {
+        .states-panel {
+          height: 600px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .states-panel {
+          height: 700px;
+        }
+      }
+
+      .states-header {
+        padding: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-surface);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .states-header h2 {
+        margin: 0;
+        color: var(--text-primary);
+        font-size: 1.25rem;
+      }
+
+      .toggle-btn {
+        display: none;
+      }
+
+      .states-content {
+        padding: 0;
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      .states-stats {
+        padding: 1.25rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-surface);
+        font-size: 0.9rem;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .stat-item {
+        padding: 0.5rem;
+        border-radius: 8px;
+        background: var(--bg-card);
+      }
+
+      .stat-number {
+        font-size: 1.5rem;
+        font-weight: bold;
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        margin-top: 0.25rem;
+      }
+
+      .stat-item.visited .stat-number {
+        color: var(--visited-color);
+      }
+
+      .stat-item.planned .stat-number {
+        color: var(--planned-color);
+      }
+
+      .states-list-container {
+        padding: 1.25rem;
+      }
+
       .states-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.5em;
+        gap: 0.5rem;
         margin: 0;
         padding: 0;
         list-style: none;
       }
+
       .state-chip {
-        background: #e6eaf0;
-        border-radius: 999px;
-        padding: 0.3em 1em;
-        font-size: 1em;
-        margin-bottom: 0.3em;
+        background: var(--bg-neutral);
+        border-radius: 20px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        border: 1px solid var(--border);
       }
+
       .state-chip.visited {
-        background: #b7f7c2;
-        font-weight: bold;
+        background: var(--bg-visited);
+        color: var(--visited-color);
+        font-weight: 600;
       }
+
       .state-chip.planned {
-        background: #bcdffb;
-        color: #222;
-        font-weight: bold;
+        background: var(--bg-planned);
+        color: var(--planned-color);
+        font-weight: 600;
       }
-      #controls {
-        margin: 20px 0;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      #controls label {
-        font-size: 1.1em;
-        margin-right: 8px;
-        white-space: nowrap;
-      }
-      #loop-selector {
-        padding: 8px 16px;
-        border-radius: 6px;
-        border: 1.5px solid #1976d2;
-        font-size: 1.2em;
-        min-width: 120px;
-        background: #fff;
-        transition: border 0.2s;
-      }
-      #loop-selector:focus {
-        outline: none;
-        border: 2px solid #1976d2;
-      }
-      #state-list {
-        margin-top: 20px;
-        padding: 15px;
-        border-radius: 8px;
-        background-color: #f8f8f8;
-        max-width: 600px;
-      }
-      #state-list h2 {
-        margin-top: 0;
-        margin-bottom: 10px;
-      }
-      #state-list ul {
-        margin: 0;
-        padding-left: 20px;
-      }
-      #state-list li {
-        margin: 5px 0;
-        font-size: 1.1em;
-      }
+
       .camper-van-icon {
         font-size: 2rem;
         line-height: 1;
         text-align: center;
-        text-shadow: 0 1px 2px #fff, 0 0px 2px #fff;
+        text-shadow: 0 1px 2px rgba(255,255,255,0.8), 0 0px 2px rgba(255,255,255,0.8);
       }
+
       .future-van-icon {
-        opacity: 0.4;
+        opacity: 0.5;
       }
+
+      @media (prefers-color-scheme: dark) {
+        .camper-van-icon {
+          text-shadow: 0 1px 2px rgba(0,0,0,0.8), 0 0px 2px rgba(0,0,0,0.8);
+        }
+      }
+
+      /* Hide old duplicate elements */
+      #controls, #state-list { display: none; }
     </style>
   </head>
   <body>
-    <h1>Our Trip 2025-2026</h1>
-    <div id="loop-controls" class="loop-selector"></div>
-    <div id="map" style="position: relative"></div>
-    <div id="map-legend" class="legend">
-      <span><span class="legend-dot visited"></span>Visited</span>
-      <span><span class="legend-dot planned"></span>Planned</span>
+    <div class="app-container">
+      <h1>Our Trip 2025-2026</h1>
+      <div id="loop-controls" class="loop-selector"></div>
+      
+      <div class="content-grid">
+        <div class="map-section">
+          <div id="map"></div>
+          <div id="map-legend" class="legend">
+            <span><span class="legend-dot visited"></span>Visited</span>
+            <span><span class="legend-dot planned"></span>Planned</span>
+          </div>
+        </div>
+        
+        <div class="states-panel">
+          <div class="states-header">
+            <h2>States</h2>
+          </div>
+          <div class="states-content" id="states-content">
+            <div class="states-stats" id="states-stats">
+              <div class="stats-grid">
+                <div class="stat-item visited">
+                  <span class="stat-number" id="visited-count">0</span>
+                  <div class="stat-label">Visited</div>
+                </div>
+                <div class="stat-item planned">
+                  <span class="stat-number" id="planned-count">0</span>
+                  <div class="stat-label">Planned</div>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" id="total-count">50</span>
+                  <div class="stat-label">Total</div>
+                </div>
+              </div>
+            </div>
+            <div class="states-list-container">
+              <ul id="all-states" class="states-list"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div id="state-list" class="states-card">
+
+    <!-- Hidden old elements -->
+    <div id="state-list" class="states-card" style="display: none;">
       <h2>States</h2>
-      <ul id="all-states" class="states-list"></ul>
+      <ul class="states-list"></ul>
     </div>
 
     <script>
+      // Removed toggle states panel functionality
+
       // Initialize the map
       const map = L.map("map").setView([39.8283, -98.5795], 4);
 
@@ -252,7 +451,32 @@
       function updateStatesList(statesData, visitedStates, plannedStates) {
         const allStatesList = document.getElementById("all-states");
         allStatesList.innerHTML = "";
-        statesData.features.forEach((state) => {
+        
+        // Filter out DC and Puerto Rico
+        const filteredStates = statesData.features.filter(state => 
+          !['District of Columbia', 'Puerto Rico'].includes(state.properties.name)
+        );
+        
+        // Update statistics
+        document.getElementById('visited-count').textContent = visitedStates.size;
+        document.getElementById('planned-count').textContent = plannedStates.size;
+        document.getElementById('total-count').textContent = filteredStates.length;
+        
+        // Sort states: visited first, then planned, then others
+        const sortedStates = filteredStates.sort((a, b) => {
+          const aVisited = visitedStates.has(a.properties.name);
+          const bVisited = visitedStates.has(b.properties.name);
+          const aPlanned = plannedStates.has(a.properties.name);
+          const bPlanned = plannedStates.has(b.properties.name);
+          
+          if (aVisited && !bVisited) return -1;
+          if (!aVisited && bVisited) return 1;
+          if (aPlanned && !bPlanned && !aVisited && !bVisited) return -1;
+          if (!aPlanned && bPlanned && !aVisited && !bVisited) return 1;
+          return a.properties.name.localeCompare(b.properties.name);
+        });
+        
+        sortedStates.forEach((state) => {
           const li = document.createElement("li");
           li.className = "state-chip";
           li.textContent = state.properties.name;
@@ -271,12 +495,12 @@
         if (statesLayer) map.removeLayer(statesLayer);
         if (visitedStatesLayer) map.removeLayer(visitedStatesLayer);
 
-        // Filter points based on selected loop
+        // Filter points based on selected loop (cumulative)
         const filteredPoints =
           selectedLoop === "all"
             ? tripPoints
             : tripPoints.filter(
-                (point) => point.properties.loop === parseInt(selectedLoop)
+                (point) => point.properties.loop <= parseInt(selectedLoop)
               );
 
         // Add the GeoJSON layer with filtered points
@@ -342,9 +566,28 @@
               // Use chips for states, passing both visited and planned
               updateStatesList(statesData, visitedStates, plannedStates);
 
-              // Fit the map to show all points
-              if (nonFuturePoints.length > 0) {
-                map.fitBounds(visitedStatesLayer.getBounds());
+              // Fit the map to show relevant states/points
+              if (selectedLoop === "all") {
+                // For "all", show all visited states
+                if (nonFuturePoints.length > 0) {
+                  map.fitBounds(visitedStatesLayer.getBounds());
+                }
+              } else {
+                // For specific loops, focus on states that have points from that loop
+                const loopStates = new Set([...visitedStates, ...plannedStates]);
+                if (loopStates.size > 0) {
+                  const loopStatesFeatures = statesData.features.filter(state => 
+                    loopStates.has(state.properties.name)
+                  );
+                  if (loopStatesFeatures.length > 0) {
+                    const loopStatesLayer = L.geoJSON(loopStatesFeatures);
+                    map.fitBounds(loopStatesLayer.getBounds());
+                  }
+                } else if (filteredPoints.length > 0) {
+                  // Fallback to fitting the actual trip points if no states detected
+                  const pointsLayer = L.geoJSON(filteredPoints);
+                  map.fitBounds(pointsLayer.getBounds());
+                }
               }
             });
         });
