@@ -495,16 +495,24 @@
         if (statesLayer) map.removeLayer(statesLayer);
         if (visitedStatesLayer) map.removeLayer(visitedStatesLayer);
 
-        // Filter points based on selected loop (cumulative)
-        const filteredPoints =
+        // Filter points for display on map (only selected loop, not cumulative)
+        const displayPoints =
+          selectedLoop === "all"
+            ? tripPoints
+            : tripPoints.filter(
+                (point) => point.properties.loop === parseInt(selectedLoop)
+              );
+
+        // Filter points for state calculations (cumulative up to selected loop)
+        const cumulativePoints =
           selectedLoop === "all"
             ? tripPoints
             : tripPoints.filter(
                 (point) => point.properties.loop <= parseInt(selectedLoop)
               );
 
-        // Add the GeoJSON layer with filtered points
-        tripLayer = L.geoJSON(filteredPoints, {
+        // Add the GeoJSON layer with display points
+        tripLayer = L.geoJSON(displayPoints, {
           pointToLayer: function (feature, latlng) {
             // If 'all' loops, make future points transparent; otherwise, all are opaque
             if (selectedLoop === "all" && feature.properties.future === true) {
@@ -519,14 +527,14 @@
           },
         }).addTo(map);
 
-        // Only use non-future points for visited states
-        const nonFuturePoints = filteredPoints.filter(
+        // Use cumulative points for state calculations
+        const nonFutureCumulativePoints = cumulativePoints.filter(
           (point) => point.properties.future !== true
         );
 
         Promise.all([
-          getVisitedStates(nonFuturePoints),
-          getPlannedStates(filteredPoints),
+          getVisitedStates(nonFutureCumulativePoints),
+          getPlannedStates(cumulativePoints),
         ]).then(([visitedStates, plannedStates]) => {
           fetch("us-states.json")
             .then((response) => response.json())
@@ -569,24 +577,14 @@
               // Fit the map to show relevant states/points
               if (selectedLoop === "all") {
                 // For "all", show all visited states
-                if (nonFuturePoints.length > 0) {
+                if (nonFutureCumulativePoints.length > 0) {
                   map.fitBounds(visitedStatesLayer.getBounds());
                 }
               } else {
-                // For specific loops, focus on states that have points from that loop
-                const loopStates = new Set([...visitedStates, ...plannedStates]);
-                if (loopStates.size > 0) {
-                  const loopStatesFeatures = statesData.features.filter(state => 
-                    loopStates.has(state.properties.name)
-                  );
-                  if (loopStatesFeatures.length > 0) {
-                    const loopStatesLayer = L.geoJSON(loopStatesFeatures);
-                    map.fitBounds(loopStatesLayer.getBounds());
-                  }
-                } else if (filteredPoints.length > 0) {
-                  // Fallback to fitting the actual trip points if no states detected
-                  const pointsLayer = L.geoJSON(filteredPoints);
-                  map.fitBounds(pointsLayer.getBounds());
+                // For specific loops, focus on the displayed points from that loop
+                if (displayPoints.length > 0) {
+                  const displayPointsLayer = L.geoJSON(displayPoints);
+                  map.fitBounds(displayPointsLayer.getBounds());
                 }
               }
             });
