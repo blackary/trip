@@ -171,7 +171,7 @@ features:
   properties:
     name: Cracker Barrel
     loop: 2
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -181,7 +181,7 @@ features:
   properties:
     name: Ark Encounter
     loop: 2
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -191,7 +191,7 @@ features:
   properties:
     name: West Lafayette, Indiana, United States
     loop: 2
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -201,7 +201,7 @@ features:
   properties:
     name: West Lafayette, Indiana, United States
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -211,7 +211,7 @@ features:
   properties:
     name: Towpath Service Plaza
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -221,7 +221,7 @@ features:
   properties:
     name: Cuyahoga Valley National Park
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -231,7 +231,7 @@ features:
   properties:
     name: HTR Niagara
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -241,7 +241,7 @@ features:
   properties:
     name: Lisbon, New York, United States
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
