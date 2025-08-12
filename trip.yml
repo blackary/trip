@@ -251,7 +251,7 @@ features:
   properties:
     name: Sheep Shop
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -261,7 +261,7 @@ features:
   properties:
     name: Goodrich's Maple Farm
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -271,7 +271,7 @@ features:
   properties:
     name: The Mount Washington Cog Railway
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -281,7 +281,7 @@ features:
   properties:
     name: Schoodic Woods Campground
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -291,7 +291,7 @@ features:
   properties:
     name: Seawall Campground
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -301,7 +301,7 @@ features:
   properties:
     name: Harold Parker State Forest
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -311,7 +311,7 @@ features:
   properties:
     name: Plimoth Plantation
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -321,7 +321,7 @@ features:
   properties:
     name: Harvest Hosts Stay
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -331,7 +331,7 @@ features:
   properties:
     name: Marble House
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -341,7 +341,7 @@ features:
   properties:
     name: Cabela's
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -351,7 +351,7 @@ features:
   properties:
     name: Mark Twain House & Museum
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -361,7 +361,7 @@ features:
   properties:
     name: Stowe Center for Literary Activism
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -371,7 +371,7 @@ features:
   properties:
     name: Sam's Club
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -381,7 +381,7 @@ features:
   properties:
     name: Rye's Playland
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -391,7 +391,7 @@ features:
   properties:
     name: Liberty Harbor RV Park
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -401,7 +401,7 @@ features:
   properties:
     name: Princeton, New Jersey, United States
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -411,7 +411,7 @@ features:
   properties:
     name: The Farmers Market
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -421,7 +421,7 @@ features:
   properties:
     name: Harvest Hosts Stay
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -431,7 +431,7 @@ features:
   properties:
     name: Washington, D.C., United States
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -441,7 +441,7 @@ features:
   properties:
     name: Lake Fairfax Park Campground
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
@@ -449,19 +449,9 @@ features:
       - 38.96317
 - type: Feature
   properties:
-    name: Gettysburg, Pennsylvania, United States
-    loop: 3
-    future: true
-  geometry:
-    type: Point
-    coordinates:
-      - -77.2322
-      - 39.8283
-- type: Feature
-  properties:
     name: West Lafayette, Indiana, United States
     loop: 3
-    future: true
+    future: false
   geometry:
     type: Point
     coordinates:
